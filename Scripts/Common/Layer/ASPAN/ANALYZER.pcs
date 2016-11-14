@@ -1,0 +1,1084 @@
+# Processor for importing Analyzer DXF files. 
+# Circular & rectangular (also angled) pockets. Horizontal boring.
+#
+# IDACS 23.09.2008
+#
+# [ENT_LAYER] 				// Layer of the entity          INPUT
+# [ENT_HANDLE]				// Handle of the entity			INPUT
+# [ENT_ELEVATION]			// Elevation of the enitity		INPUT	
+# [ENT_THICKNESS] 			// Thickness of the entity		INPUT
+# [ENT_COLOR] 				// Color of the entity			INPUT
+# [ENT_TYPE]				// Type of entity : could be one of the following:
+#								LINE
+#								CIRCLE
+#								ARC
+#								POLYLINE
+#								VERTEX
+#								SEQEND
+#								ELLIPSE
+#								LWPOLY
+#								SPLINE
+#--------------------------------------------------------#
+#              Variables Initialization                  #
+#--------------------------------------------------------#
+
+~START INIT_GLOBVAR
+	~CALL LOAD_VAR
+	~LET [FIRST_POINT_FOUND] = 0
+	~LET [LAST_POINT_X] = -1
+	~LET [LAST_POINT_Y] = -1
+	~LET [ROUGH_OSET] = 0		
+	
+	~dimAry("EntitiesToDelete", 0)
+	~dimAry("EntitiesToDelete2", 0)
+	~LET [QtEntitiesToDelete] = 0
+	~LET [QtEntitiesToDelete2] = 0
+	
+	~dimAry("OriginalShapesIdxArray", 0)
+	
+	~LET [PANELTHICKNESSVALUE] = 0
+	
+~END
+
+~START INIT_ENTVAR
+	~LET [DXF_NAME] = 0
+	~LET [ENT_LAYER] = 0
+	~LET [ENT_HANDLE] = 0
+	~LET [ENT_ELEVATION] = 0
+	~LET [ENT_THICKNESS] = 0
+	~LET [ENT_COLOR] = 0
+	~LET [ENT_FACE] = 0
+	~LET [ENT_QT_SHAPES] = 0
+	~LET [ENT_QT_HOLES] = 0	
+	~LET [ENT_QT_PATHS] = 0
+~END
+
+~START LOAD_VAR
+	~LET [DEF_FILE] = [PROGDIR]dxfio\ANALYZER.INI
+	~LET [finput] = ~LOADDEFS([DEF_FILE])
+	
+	~LET [USETOOL] = ~GetDef("USETOOL","1")
+	~LET [USEDIA] = ~GetDef("USEDIA","0")
+	~LET [USELEAD] = ~GetDef("USELEAD","0")
+	~LET [STARTANG] = ~GetDef("STARTANG","2")
+	~LET [ROUGH_OSET] = ~GetDef("ROUGH_OSET","1")
+	~LET [ROUGH_TOOL] = ~GetDef("ROUGH_TOOL","101")
+	~LET [ROUGH_OSET_VAL] = ~GetDef("ROUGH_OSET_VAL","0.5")
+	~CLOSEDEFS(0)
+~END
+
+~START SAVE_VAR
+	~LET [DEF_FILE] = [PROGDIR]dxfio\ANALYZER.INI
+	~LET [foutput] = ~LOADDEFS([DEF_FILE])
+	
+	~PutDef("USETOOL",[USETOOL])
+	~PutDef("USEDIA",[USEDIA])
+	~PutDef("USELEAD",[USELEAD])
+	~PutDef("STARTANG",[STARTANG])
+	~PutDef("ROUGH_OSET",[ROUGH_OSET])
+	~PutDef("ROUGH_TOOL",[ROUGH_TOOL])
+	~PutDef("ROUGH_OSET_VAL",[ROUGH_OSET_VAL])
+	~CLOSEDEFS()
+~END
+
+~START SETUP
+	~CALL LOAD_VAR
+	~LET [TITLE] = Analyzer DXF Processor. Updated 03/11/2009
+	~LET [DLG] = ~DlgBegin(,[TITLE], 240, 320)
+	
+	#~DlgItem([DLG], "RadioButton",    201, "Use Tool Name/Number supplied by the DXF ", "USETOOL",             10,  20, 200, 10)
+	#~DlgItem([DLG], "RadioButton",    202, "Use Only the Tool Diameter supplied by the DXF", "USEDIA",         10,  35, 200, 10)
+	~DlgItem([DLG], "CHECKBOX",        203, "Use Lead in lead out for sizing",  "USELEAD",                      10,  35, 150, 10)
+    ~DlgItem([DLG], "Label",           204, "Leadin Leadout Angle",    					                        10,  50, 100, 10)
+    ~DlgItem([DLG], "MminBox",         205, "STARTANG",                                                        150,  50,  35, 10)
+    
+	#~DlgItem([DLG], "CHECKBOX",        206, "Roughing Offset Enable",  "ROUGH_OSET",                            10,  70, 150, 10)
+    #~DlgItem([DLG], "Label",           207, "Roughing Offset",    					                            10,  85, 100, 10)
+    #~DlgItem([DLG], "MMINBOX",         208, "ROUGH_OSET_VAL",                                                  150,  85,  35, 10)
+    #~DlgItem([DLG], "Label",           209, "Roughing Tool",    					                            10,  95, 100, 10)
+ 	#~DlgItem([DLG], "button",          210, [ROUGH_TOOL],       		   150,  95,  35, 14, "RoughTool", , 5)
+	
+	~DlgItem([DLG], "Button",  1, "OK",      58, 295, 60, 20, "OnOk", ,    5)
+	~DlgItem([DLG], "Button",  2, "Cancel", 122, 295, 60, 20, "OnCancel", ,5)
+	~LET [RES] = ~DlgExecute([DLG])
+	~DlgEnd([DLG])
+	~IF ~I([RES] != 1) = 1
+	~EXIT_SUB
+	~ENDIF
+	~CALL SAVE_VAR
+~END
+
+~START RoughTool
+	~LET [ROUGH_TOOL] = ~PickTool("IS_SHAPE" ,[ROUGH_TOOL])
+	~DlgItemProperty([DLG], 210, "SetText",[ROUGH_TOOL])
+	~DlgItemProperty([DLG], 210, "Show")
+~END
+
+~START OnOk
+  ~DlgCommand([DLG],1)
+~END
+~START OnCancel
+  ~DlgCommand([DLG],2)
+~END
+
+~START GET_PANEL_THICKNESS
+
+	#GET THE LAYER NAME "Panel" THESE ARRAY ENTITIES WILL BE DELETED. SEE POLYLINE SECTION
+	~LET [POS] = ~INSTR([ENT_LAYER], "_")
+	~LET [TOTALLEN] = ~LEN([ENT_LAYER])
+	#THICKVAL=THE PANEL THICKNESS CHARACTERS EG: "16P2" (16.2mm)
+	~LET [THICKVAL] = ~RIGHT([ENT_LAYER], ~I([TOTALLEN] - ([POS] )))
+	~LET [LEN] = ~LEN([THICKVAL])
+	#we get the name Panel
+	~LET [SHORTLAYERNAME] = ~LEFT([ENT_LAYER], ~I([TOTALLEN] - ([LEN]+1 )))
+	
+	#GET THE PANEL THICKNESS FROM THE LAYER NAME
+	~LET [POS] = ~INSTR([THICKVAL], "P")
+	~LET [TOTALLEN] = ~LEN([THICKVAL])
+	~LET [DECIMALPLACES] = ~RIGHT([THICKVAL], ~I([TOTALLEN] - ([POS] )))
+	~LET [LEN] = ~LEN([DECIMALPLACES])
+	~LET [INTTHICKVAL] = ~LEFT([THICKVAL], ~I([TOTALLEN] - ([LEN]+1 )))
+	
+	#WITH OR WITHOUT DECIMAL POINT "P" FOUND
+	~IF [SHORTLAYERNAME] = Panel
+		~IF [POS] <> 0
+			~LET [PANELTHICKNESSVALUE] = [INTTHICKVAL].[DECIMALPLACES]
+		~ELSE
+			~LET [PANELTHICKNESSVALUE] = [THICKVAL]
+		~ENDIF
+	~ENDIF
+~END			
+
+~START GET_INFO_FROM_LAYER_NAME
+
+	~LET [TokDelim] = "
+	~LET [ParDelim] = _
+	~LET [Parameters] = ~ExtractParams([ENT_LAYER],[ParDelim],[TokDelim],0,"DirParameters")
+	~FOR [i] = 0 TO [Parameters]-1 STEP 1
+		#~MSGBOX(,,~Ary("DirParameters", [i]))
+		~LET [ENT_LAYER_FIELD] = ~Ary("DirParameters", [i])
+	~NEXT
+	
+	# EXAMPLE = R_16P2_T3_R
+	#~MSGBOX(,,~Ary("DirParameters", 0)) #ROUTING TYPE R=CLOSED CONTOUR, RO=OPEN CONTOUR, DV=VERTICAL DRILL, DH=HORI DRILL, RPOCKET=RECTANGULAR POCKET, CPOCKET=CIRCULAR POCKET 
+	#~MSGBOX(,,~Ary("DirParameters", 1)) #DEPTH OF CUT
+	#~MSGBOX(,,~Ary("DirParameters", 2)) #TOOL NUMBER
+	#~MSGBOX(,,~Ary("DirParameters", 3)) #TOOL CORRECTION L R C
+
+	# 0 GET TYPE OF MACHINING OPERATION FROM THE LAYER NAME
+		~IF [Parameters] > 0
+			~LET [OPERATIONVALUE] = ~Ary("DirParameters", 0)
+		~ENDIF
+		
+	# 1 GET DEPTH OF CUT FROM THE LAYER NAME
+		~IF [Parameters] > 1
+			~LET [ZVALUE] = ~Ary("DirParameters", 1)
+			~LET [POS] = ~INSTR([ZVALUE], "P")
+			~LET [TOTALLEN] = ~LEN([ZVALUE])
+			~LET [DECIMALPLACES] = ~RIGHT([ZVALUE], ~I([TOTALLEN] - ([POS] )))
+			~LET [LEN] = ~LEN([DECIMALPLACES])
+			~LET [INTZVALUE] = ~LEFT([ZVALUE], ~I([TOTALLEN] - ([LEN]+1 )))
+			~IF [POS] <> 0
+				~LET [ZVALUE] = [INTZVALUE].[DECIMALPLACES]
+			~ELSE
+				~LET [ZVALUE] = [ZVALUE]
+			~ENDIF
+		~ENDIF
+		
+	# 2 GET TOOL NUMBER FROM THE LAYER NAME
+		~IF [Parameters] > 2
+			~LET [TNVALUE] = ~Ary("DirParameters", 2)
+			~LET [LEN] = ~LEN([TNVALUE])
+			~LET [TNVALUE] = ~RIGHT([TNVALUE], ~I([LEN] - 1))
+		~ENDIF
+		
+	# 3 GET TOOL CORRECTION FROM THE LAYER NAME
+		~IF [Parameters] > 3
+			#~MSGBOX(,,"GETTING TOOL COMP")
+			~LET [TCVALUE] = ~Ary("DirParameters", 3)
+			~IF [TCVALUE] = C
+				~LET [TOOLCOMP] = 0
+			~ENDIF
+			~IF [TCVALUE] = R
+				~LET [TOOLCOMP] = 1
+			~ENDIF
+			~IF [TCVALUE] = L
+				~LET [TOOLCOMP] = 2
+			~ENDIF
+		~ENDIF
+		
+		#~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+		#~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ~CHR(34))
+		
+		#~MSGBOX(,,"ENT TYPE=",[ENT_TYPE]," ;  LAYER NAME=",[ENT_LAYER],[CHR13],[CHR13],"OPERATION TYPE=",[OPERATIONVALUE]," ;  Z DEPTH=",[ZVALUE]," ;  TOOL=",[TNVALUE]," ;  CORRECTION=",[TCVALUE],[CHR13],[CHR13],"PARAMETER COUNT=",[Parameters])
+	
+~END
+~START GET_MACHINE_OPERATION_FROM_LAYER_NAME
+
+	~LET [TokDelim] = "
+	~LET [ParDelim] = _
+	~LET [Parameters] = ~ExtractParams([ENT_LAYER],[ParDelim],[TokDelim],0,"DirParameters")
+	~FOR [i] = 0 TO [Parameters]-1 STEP 1
+		#~MSGBOX(,,~Ary("DirParameters", [i]))
+		~LET [ENT_LAYER_FIELD] = ~Ary("DirParameters", [i])
+	~NEXT
+	
+	# 0 GET TYPE OF MACHINING OPERATION FROM THE LAYER NAME
+		~LET [OPERATIONVALUE] = ~Ary("DirParameters", 0)
+		
+	#~MSGBOX(,,"ENT TYPE=",[ENT_TYPE]," ;  LAYER NAME=",[ENT_LAYER],[CHR13],[CHR13],"OPERATION TYPE=",[OPERATIONVALUE],[CHR13],[CHR13],"PARAMETER COUNT=",[Parameters])
+	
+~END
+
+~START GET_HORIZONTAL_Z_FROM_LAYER_NAME
+
+	~LET [TokDelim] = "
+	~LET [ParDelim] = _
+	~LET [Parameters] = ~ExtractParams([ENT_LAYER],[ParDelim],[TokDelim],0,"DirParameters")
+	~FOR [i] = 0 TO [Parameters]-1 STEP 1
+		#~MSGBOX(,,~Ary("DirParameters", [i]))
+		~LET [ENT_LAYER_FIELD] = ~Ary("DirParameters", [i])
+	~NEXT
+	
+	# 1 GET DEPTH OF CUT FROM THE LAYER NAME
+		~IF [Parameters] > 1
+			~LET [ZVALUE] = ~Ary("DirParameters", 1)
+			~LET [POS] = ~INSTR([ZVALUE], "P")
+			~LET [TOTALLEN] = ~LEN([ZVALUE])
+			~LET [DECIMALPLACES] = ~RIGHT([ZVALUE], ~I([TOTALLEN] - ([POS] )))
+			~LET [LEN] = ~LEN([DECIMALPLACES])
+			~LET [INTZVALUE] = ~LEFT([ZVALUE], ~I([TOTALLEN] - ([LEN]+1 )))
+			~IF [POS] <> 0
+				~LET [ZVALUE_HORI] = [INTZVALUE].[DECIMALPLACES]
+			~ELSE
+				~LET [ZVALUE_HORI] = [ZVALUE]
+			~ENDIF
+		~ENDIF
+~END			
+
+#-----------------------------------START CONVERSION--------------------------
+~START CONVERT_ENTITY
+
+	~IF [ENT_TYPE] = LWPOLYLINE
+		
+		~CALL GET_MACHINE_OPERATION_FROM_LAYER_NAME
+		
+		# R = CLOSED CONTOUR
+		~IF [OPERATIONVALUE] = R
+		
+		    ~LET [idx] = 0
+		    ~FOR [idx] = 0 TO [ENT_QT_PATHS] - 1
+				
+				~LET [pathHnd] = ~Ary("ENT_PATH_HND", [idx])
+			    ~LET [isA] = IS_SHAPE
+				~LET [shapeIdx] = ~Hnd2Idx([isA], [pathHnd])
+				~LET [idxCOPY] = [shapeIdx]
+				
+				~LETARY("EntitiesToDelete",[QtEntitiesToDelete]) = [shapeIdx]
+				~LET [QtEntitiesToDelete] = ~I([QtEntitiesToDelete] + 1)
+				
+				~CALL GET_INFO_FROM_LAYER_NAME
+				
+				~LET [SURROUND] = 0
+				~IF [OPERATIONVALUE] = R
+					~LET [SURROUND] = ~I([SURROUND] + 1)
+				~ENDIF
+				~IF ~([ZVALUE] >= [PANELTHICKNESSVALUE]) = 1
+					~LET [SURROUND] = ~I([SURROUND] + 1)
+				~ENDIF
+				~IF [TCVALUE] = R
+					~LET [SURROUND] = ~I([SURROUND] + 1)
+				~ENDIF
+				
+		    	~LET [TOOLDIA] = ~Atr(T=[TNVALUE], "DIAM")
+		    	~LET [PARTW_Y] = ~(ABS([DXF_YMIN]))
+		    	
+				~IF [SURROUND] = 3
+			    	~IF ~([DXF_XMAX] < 200 OR [PARTW_Y] < 200) = 1
+				    	~LET [PRIORITY] = 10
+			    	~ELSE
+				    	~LET [PRIORITY] = 11
+			    	~ENDIF
+			    ~ELSE
+			    	~LET [PRIORITY] = 1
+			    ~ENDIF
+			    
+				~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+				~SetTool([isA], [shapeIdx], [TOOL_STRING])
+				
+				~OBJGET([isA], [shapeIdx],".ange", "ange",".first", "first", ".xs", "xs", ".ys", "ys")
+				#~OBJSET([isA], [shapeIdx], ".diam", [TOOLDIA], ".tcomp", [TOOLCOMP], ".ps", [ENT_THICKNESS], ".pe", [ENT_THICKNESS])
+				# CALCULATE LEAD IN OUT ARC
+				~LET [DELTA] = ~(([TOOLDIA]/2) / SIN [STARTANG])
+								
+				# CALCULATE ANGLE START LEAD IN OUT
+				~IF [TCVALUE] = R
+					~LET [YDELIN] = ~(SIN ([ange]-180-[STARTANG]) * [TOOLDIA])
+					~LET [YDELOUT] = ~(SIN ([ange]-180+[STARTANG]) * [TOOLDIA])
+					~LET [XDELIN] = ~(COS ([ange]-180-[STARTANG]) * [TOOLDIA])
+					~LET [XDELOUT] = ~(COS ([ange]-180+[STARTANG]) * [TOOLDIA])
+				~ELSE
+					~LET [YDELIN] = ~(SIN ([ange]-180+[STARTANG]) * [TOOLDIA])
+					~LET [YDELOUT] = ~(SIN ([ange]-180-[STARTANG]) * [TOOLDIA])
+					~LET [XDELIN] = ~(COS ([ange]-180+[STARTANG]) * [TOOLDIA])
+					~LET [XDELOUT] = ~(COS ([ange]-180-[STARTANG]) * [TOOLDIA])
+				~ENDIF
+				#JUMP LEAD IN OUT
+					~C ([TOOLCOMP])	
+					~IF ~([USELEAD] = 1) = 1
+						~G0(~([xs]+[XDELIN]),~([ys]+[YDELIN]),0,[TOOL_STRING])	
+						~IF [TCVALUE] = R
+							~LET [LEADIN] = ~rG2(~([xs]),~([ys]),[ENT_THICKNESS],~(-[DELTA]))
+						~ELSE		
+							~LET [LEADIN] = ~rG3(~([xs]),~([ys]),[ENT_THICKNESS],[DELTA])	
+						~ENDIF	
+					~ELSE
+						~G0(~([xs]),~([ys]),[ENT_THICKNESS],[TOOL_STRING])	
+					~ENDIF
+					~OBJGET([isA], [shapeIdx], ".type", "type", ".xe", "xe", ".ye", "ye", ".xs", "xs", ".ys", "ys", ".xc", "xc", ".yc", "yc")
+					~IF [type] = 0
+						#~G1(~([xe]),~([ye]))
+					~ENDIF	
+					~IF [type] = 1
+						#~G3(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF	
+					~IF [type] = 2
+						#~G2(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF
+					~OBJGET([isA], [shapeIdx], ".next", "shapeIdx", ".type", "type", ".xs", "xs", ".ys", "ys", ".xe", "xe", ".ye", "ye", ".xc", "xc", ".yc", "yc")
+				
+				~DO WHILE(~I([shapeIdx] != -1) = 1)
+				
+					~IF [type] = 0
+						~G1(~([xe]),~([ye]))
+					~ENDIF	
+					~IF [type] = 1
+						~G3(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF	
+					~IF [type] = 2
+						~G2(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF
+					
+					~OBJGET([isA], [shapeIdx], ".next", "shapeIdx", ".type", "type", ".xs", "xs", ".ys", "ys", ".xe", "xe", ".ye", "ye", ".xc", "xc", ".yc", "yc")
+				~LOOP
+				
+					~IF [type] = 0
+						~G1(~([xe]),~([ye]))
+					~ENDIF	
+					~IF [type] = 1
+						~G3(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF	
+					~IF [type] = 2
+						~G2(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF
+					
+					~IF ~([USELEAD] = 1) = 1
+						~IF [TCVALUE] = R
+							~LET [LEADOUT] = ~rG2(~([xe]-[XDELOUT]),~([ye]-[YDELOUT]),0,~(-[DELTA]))
+						~ELSE
+							~LET [LEADOUT] = ~rG3(~([xe]-[XDELOUT]),~([ye]-[YDELOUT]),0,[DELTA])
+						~ENDIF	
+					~ENDIF
+		    ~NEXT
+		    
+				~IF ~([USELEAD] = 1) = 1
+					~SetLeadInOut("IS_SHAPE", [LEADIN], 1)
+					~SetLeadInOut("IS_SHAPE", [LEADOUT], 2)
+				~ENDIF
+				
+				# CREATE ROUGHING OFFSET PATH TO SURROUND CUT
+				~IF ~([ROUGH_OSET] =1) = 1
+				
+					~LET [SURROUND] = 0
+					~IF [OPERATIONVALUE] = R
+						~LET [SURROUND] = ~I([SURROUND] + 1)
+					~ENDIF
+					~IF ~([ZVALUE] >= [PANELTHICKNESSVALUE]) = 1
+						~LET [SURROUND] = ~I([SURROUND] + 1)
+					~ENDIF
+					~IF [TCVALUE] = R
+						~LET [SURROUND] = ~I([SURROUND] + 1)
+					~ENDIF
+					
+					~IF [SURROUND] = 3
+						~IF ~([USELEAD] =1) = 1
+							~OBJGET([isA], [LEADIN], ".first", "RPATH")
+						~ELSE
+							~OBJGET([isA], [idxCOPY], ".first", "RPATH")
+						~ENDIF	
+						~LET [I] = 0
+						~DO WHILE([RPATH] != -1)
+							~LETARY("OriginalShapesIdxArray", [I]) = [RPATH]
+							~LET [I] = ~I([I] + 1)
+							~OBJGET([isA], [RPATH], ".next", "RPATH")
+						~LOOP
+					~ENDIF
+				~ENDIF
+			
+		~ENDIF
+	    
+		# RO = OPEN CONTOUR
+		~IF [OPERATIONVALUE] = RO
+		
+		    ~LET [idx] = 0
+		    ~FOR [idx] = 0 TO [ENT_QT_PATHS] - 1
+				
+				~LET [pathHnd] = ~Ary("ENT_PATH_HND", [idx])
+			    ~LET [isA] = IS_SHAPE
+				~LET [shapeIdx] = ~Hnd2Idx([isA], [pathHnd])
+				
+				~CALL GET_INFO_FROM_LAYER_NAME
+		    	~LET [TOOLDIA] = ~Atr(T=[TNVALUE], "DIAM")
+		    	~LET [PRIORITY] = 1
+				~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+				~SetTool([isA], [shapeIdx], [TOOL_STRING])
+				
+				~DO WHILE(~I([shapeIdx] != -1) = 1)
+					~OBJSET([isA], [shapeIdx], ".diam", [TOOLDIA], ".tcomp", [TOOLCOMP], ".ps", [ENT_THICKNESS], ".pe", [ENT_THICKNESS])
+					~OBJGET([isA], [shapeIdx], ".next", "shapeIdx")
+				~LOOP
+				
+		    ~NEXT
+		~ENDIF
+	    
+		~IF [OPERATIONVALUE] = RPOCKET 
+		
+		    ~LET [idx] = 0
+		    ~FOR [idx] = 0 TO [ENT_QT_PATHS] - 1
+				
+				~LET [pathHnd] = ~Ary("ENT_PATH_HND", [idx])
+			    ~LET [isA] = IS_SHAPE
+				~LET [shapeIdx] = ~Hnd2Idx([isA], [pathHnd])
+				#~LET [CopyshapeIdx] = [shapeIdx]
+				
+				~LETARY("EntitiesToDelete",[QtEntitiesToDelete]) = [shapeIdx]
+				~LET [QtEntitiesToDelete] = ~I([QtEntitiesToDelete] + 1)
+				#~MSGBOX(,,[ENT_QT_SHAPES])	
+				~CALL GET_INFO_FROM_LAYER_NAME
+				~LET [TOOLEXIST] = ~Atr([TNVALUE], "EXIST")
+				
+				~IF ~([TOOLEXIST] = 0) = 1
+					~MSGBOX("WARNING",,"Tool does not exist. Rectangular Pocket not created.")
+				~ELSE	
+				
+					~OBJGET([isA], [shapeIdx], ".first", "current")
+					~OBJGET([isA], [current], ".xs", "xst", ".ys", "yst", ".xe", "x1", ".ye", "y1", ".ange", "ANGLE")
+					 
+					~OBJGET([isA], [current], ".next", "current")
+					~OBJGET([isA], [current], ".xe", "x2", ".ye", "y2", ".ange", "ANGLE2")
+					
+					~OBJGET([isA], [current], ".next", "current") 
+					~OBJGET([isA], [current], ".xe", "x3", ".ye", "y3")
+					
+					~OBJGET([isA], [current], ".next", "current") 
+					~OBJGET([isA], [current], ".xe", "x4", ".ye", "y4")
+					
+					~IF ~([ENT_QT_SHAPES] =5) = 1
+						~OBJGET([isA], [current], ".next", "current") 
+						~OBJGET([isA], [current], ".xe", "x5", ".ye", "y5")
+					~ENDIF
+				
+					#~G0([xst],[yst],[ENT_THICKNESS],[TOOLDIA])
+					#~G1([x1],[y1])
+					#~G1([x2],[y2])
+					#~G1([x3],[y3])
+					#~G1([x4],[y4])
+					#~G1([xst],[yst])
+					
+					#~LET [CopyshapeIdx] = [shapeIdx]
+					
+					#~LET [ANGLECHECK1] = ~([ANGLE] + 360)
+					#~LET [ANGLECHECK2] = ~([ANGLE2] + 360)
+					
+					~IF ~([ANGLE] = ([ANGLE2]-90) OR [ANGLE] = ([ANGLE2]+270)) = 1
+						~LET [DIRECTION] = CW
+						~LET [ANGLE] = ~(180+[ANGLE])
+					~ELSE
+						~LET [DIRECTION] = CCW
+					~ENDIF
+					
+					~CALL RPOCKET
+					
+					#~UpdateWin
+					#~MSGBOX(,,"DIRECTION=",[DIRECTION]," ANGLE=", [ANGLE],  " ANGLE2=", [ANGLE2])
+					
+					
+				~ENDIF
+		    
+		    ~NEXT
+		    
+		~ENDIF
+	
+	~ENDIF
+	
+	~IF [ENT_TYPE] = POLYLINE
+	
+		~CALL GET_MACHINE_OPERATION_FROM_LAYER_NAME
+					
+		~IF [OPERATIONVALUE] = Panel
+			~CALL GET_PANEL_THICKNESS
+			#~MSGBOX(,,[PANELTHICKNESSVALUE])
+			   ~LET [idx] = 0
+			   ~FOR [idx] = 0 TO [ENT_QT_PATHS] - 1
+			   
+				~LET [pathHnd] = ~Ary("ENT_PATH_HND", [idx])
+			    ~LET [isA] = IS_SHAPE
+				~LET [shapeIdx] = ~Hnd2Idx([isA], [pathHnd])
+				
+				~LETARY("EntitiesToDelete",[QtEntitiesToDelete]) = [shapeIdx]
+				~LET [QtEntitiesToDelete] = ~I([QtEntitiesToDelete] + 1)
+				
+				~LET [DIMX] = ~([ENT_XMAX] - [ENT_XMIN])			
+				~LET [DIMY] = ~([ENT_YMAX] - [ENT_YMIN])
+	
+		    ~NEXT
+		~ENDIF
+	
+		
+		~IF [OPERATIONVALUE] = DH
+				
+		    ~LET [idx] = 0
+		    ~FOR [idx] = 0 TO [ENT_QT_PATHS] - 1
+				
+				~LET [pathHnd] = ~Ary("ENT_PATH_HND", [idx])
+			    ~LET [isA] = IS_SHAPE
+				~LET [shapeIdx] = ~Hnd2Idx([isA], [pathHnd])
+				~OBJGET([isA], [shapeIdx], ".xs", "xs", ".xe", "xe", ".ys", "ys", ".ye", "ye")
+				
+				~CALL GET_HORIZONTAL_Z_FROM_LAYER_NAME
+				~CALL HORIZONTAL
+				
+		    ~NEXT
+											
+				~LETARY("EntitiesToDelete",[QtEntitiesToDelete]) = [shapeIdx]
+				~LET [QtEntitiesToDelete] = ~I([QtEntitiesToDelete] + 1)
+	
+		~ENDIF
+			
+	~ENDIF
+		
+	#CREATE HOLES & CIRCULAR POCKETS
+	~IF [ENT_TYPE] = CIRCLE
+	~CALL GET_MACHINE_OPERATION_FROM_LAYER_NAME
+			 
+		~IF [OPERATIONVALUE] = DV  
+		    ~LET [holeHnd] = ~Ary("ENT_HOLE_HND", 0)
+		    ~LET [isA] = IS_HOLE
+		    ~LET [holeIdx] = ~Hnd2Idx([isA], [holeHnd])
+		    ~OBJGET([isA],[holeIdx],".x","X")
+		    ~OBJGET([isA],[holeIdx],".Y","Y")
+			~OBJSET([isA], [holeIdx], ".p", [ENT_THICKNESS])
+		    ~OBJGET([isA],[holeIdx],".diam","DIAM")
+		~ENDIF
+		
+		~IF [OPERATIONVALUE] = CPOCKET 
+		
+			~IF ~([ENT_QT_PATHS] > 0) = 1
+			
+				~LET [idx] = 0
+				~FOR [idx] = 0 TO [ENT_QT_PATHS] - 1
+				
+					~LET [pathHnd] = ~Ary("ENT_PATH_HND", [idx])
+					~LET [isA] = IS_SHAPE
+					~LET [shapeIdx] = ~Hnd2Idx([isA], [pathHnd])
+					
+					~LETARY("EntitiesToDelete",[QtEntitiesToDelete]) = [shapeIdx]
+					~LET [QtEntitiesToDelete] = ~I([QtEntitiesToDelete] + 1)
+					
+					~CALL GET_INFO_FROM_LAYER_NAME
+					~LET [TOOLEXIST] = ~Atr([TNVALUE], "EXIST")
+					
+					~IF ~([TOOLEXIST] = 0) = 1
+						~MSGBOX("WARNING",,"Tool does not exist. Circular Pocket not created.")
+					~ELSE	
+						~LET [TOOLDIA] = ~Atr(T=[TNVALUE], "DIAM")
+						~LET [PRIORITY] = 1
+						~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+						~SetTool([isA], [shapeIdx], [TOOL_STRING])
+						~OBJSET([isA], [shapeIdx], ".diam", [TOOLDIA])
+						~OBJGET([isA], [shapeIdx], ".xc", "xc", ".yc", "yc", ".radius", "radius")
+						
+						~CALL CPOCKET
+					~ENDIF
+				
+				~NEXT
+				
+			~ELSE 
+			    ~LET [holeHnd] = ~Ary("ENT_HOLE_HND", 0)
+			    ~LET [isA] = IS_HOLE
+			    ~LET [holeIdx] = ~Hnd2Idx([isA], [holeHnd])
+			    ~OBJGET([isA],[holeIdx],".x","XC")
+			    ~OBJGET([isA],[holeIdx],".Y","YC")
+				#~OBJSET([isA], [holeIdx], ".p", [ENT_THICKNESS])
+			    ~OBJGET([isA],[holeIdx],".diam","DIAM")
+
+					~CALL GET_INFO_FROM_LAYER_NAME
+					~LET [TOOLEXIST] = ~Atr([TNVALUE], "EXIST")
+					
+					~IF ~([TOOLEXIST] = 0) = 1
+						~MSGBOX("WARNING",,"Tool does not exist. Circular Pocket not created.")
+					~ELSE	
+						~LET [TOOLDIA] = ~Atr(T=[TNVALUE], "DIAM")
+						~LET [PRIORITY] = 1
+						~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+						~SetTool([isA], [holeIdx], [TOOL_STRING])
+					~ENDIF	
+
+					~LET [RADIUS] = [DIAM]/2
+											~CALL CPOCKET
+				~LETARY("EntitiesToDelete2",[QtEntitiesToDelete2]) = [holeIdx]
+				~LET [QtEntitiesToDelete2] = ~I([QtEntitiesToDelete2] + 1)
+				
+				
+			
+			~ENDIF
+		
+		~ENDIF
+		    
+		# R = CIRCLE CONTOUR
+		~IF [OPERATIONVALUE] = R
+			
+			# hole cutouts & circular top type shapes with leadin & leadouts
+		
+		    ~LET [idx] = 0
+		    ~FOR [idx] = 0 TO [ENT_QT_PATHS] - 1
+		    
+				~LET [pathHnd] = ~Ary("ENT_PATH_HND", [idx])
+			    ~LET [isA] = IS_SHAPE
+				~LET [shapeIdx] = ~Hnd2Idx([isA], [pathHnd])
+				
+				~LETARY("EntitiesToDelete",[QtEntitiesToDelete]) = [shapeIdx]
+				~LET [QtEntitiesToDelete] = ~I([QtEntitiesToDelete] + 1)
+				
+				~CALL GET_INFO_FROM_LAYER_NAME
+		    	~LET [TOOLDIA] = ~Atr(T=[TNVALUE], "DIAM")
+		    	~LET [PRIORITY] = 1
+				~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+				~SetTool([isA], [shapeIdx], [TOOL_STRING])
+				~InvertDir([shapeIdx])
+								
+				~OBJGET([isA], [shapeIdx],".ange", "ange",".first", "first", ".xs", "xs", ".ys", "ys", ".radius", "radius", ".xc", "xc", ".yc", "yc")
+				#~OBJSET([isA], [shapeIdx], ".diam", [TOOLDIA], ".tcomp", [TOOLCOMP], ".ps", [ENT_THICKNESS], ".pe", [ENT_THICKNESS])
+								
+				#JUMP LEAD IN OUT
+					~C ([TOOLCOMP])	
+					~IF ~([USELEAD] = 1) = 1
+						~IF [TCVALUE] = R
+							~LET [xSTART] = ~([xs]-[TOOLDIA]/2-1)
+							~LET [ySTART] = ~([ys]-[TOOLDIA]/2-1)
+							~G0(~([xSTART]),~([ySTART]),0,[TOOL_STRING])	
+							~LET [LEADIN] = ~rG2(~([xs]),~([ys]),[ENT_THICKNESS],~(-[TOOLDIA]/2-1))
+						~ELSE		
+							~G0(~([xc]+[radius]-[TOOLDIA]/2),~([yc]),0,[TOOL_STRING])	
+							~LET [LEADIN] = ~G3(~([xs]),~([ys]),[ENT_THICKNESS],~([xs]+[radius]-[TOOLDIA]/4),~([yc]))	
+						~ENDIF	
+					~ELSE
+						~G0(~([xs]),~([ys]),[ENT_THICKNESS],[TOOL_STRING])	
+					~ENDIF
+
+					~OBJGET([isA], [shapeIdx], ".next", "shapeIdx", ".type", "type", ".xs", "xs", ".ys", "ys", ".xe", "xe", ".ye", "ye", ".xc", "xc", ".yc", "yc")
+				
+				~DO WHILE(~I([shapeIdx] != -1) = 1)
+				
+					~IF [type] = 1
+						~G3(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF	
+					~IF [type] = 2
+						~G2(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF
+					
+					~OBJGET([isA], [shapeIdx], ".next", "shapeIdx", ".type", "type", ".xs", "xs", ".ys", "ys", ".xe", "xe", ".ye", "ye", ".xc", "xc", ".yc", "yc")
+				~LOOP
+					
+					~IF [type] = 1
+						~G3(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF	
+					~IF [type] = 2
+						~G2(~([xe]),~([ye]),,~([xc]),~([yc]))
+					~ENDIF
+					
+					
+				~IF ~([USELEAD] = 1) = 1
+					~SetLeadInOut("IS_SHAPE", [LEADIN], 1)
+				~ENDIF
+				
+		    ~NEXT
+		~ENDIF
+	    
+	~ENDIF
+  
+  ~IF [ENT_TYPE] = POINT
+  
+    ~LET [holeHnd] = ~Ary("ENT_HOLE_HND", 0)
+    ~LET [isA] = IS_HOLE
+    ~LET [holeIdx] = ~Hnd2Idx([isA], [holeHnd])
+    ~LET [X] = 0 
+    ~LET [Y] = 0
+    ~LET [PROF] = 0
+    ~LET [DIAM] = 0
+    ~OBJGET([isA],[holeIdx],".x","X")
+    ~OBJGET([isA],[holeIdx],".Y","Y")
+    ~OBJGET([isA],[holeIdx],".p","PROF")
+    ~OBJGET([isA],[holeIdx],".diam","DIAM")
+
+    ~IF [FIRST_POINT_FOUND] = 1
+      ~LET [DELTA_X] = ~(ABS([LAST_POINT_X]-[X]))
+      ~LET [DELTA_Y] = ~(ABS([LAST_POINT_Y]-[Y]))      	        
+      ~LET [DELTA_X] = ~([DELTA_X]**2)
+      ~LET [DELTA_Y] = ~([DELTA_Y]**2)
+      ~LET [DIST] = ~([DELTA_X]+[DELTA_Y])
+      ~IF ~I([DIST] > 0) = 1
+        ~LET [DIST] = ~(SQR([DIST]))
+        ~IF [DIST] < 5
+          ~ObjDel([isA],[holeIdx])
+          ~G0([LAST_POINT_X],[LAST_POINT_Y],[PROF],[DIAM])
+          ~G1([X],[Y],[PROF]) 
+        ~ENDIF
+      ~ENDIF
+    ~ENDIF
+    ~LET [LAST_POINT_X] = [X]
+    ~LET [LAST_POINT_Y] = [Y]
+    ~LET [FIRST_POINT_FOUND] = 1
+  ~ELSE
+    ~LET [FIRST_POINT_FOUND] = 0
+  ~ENDIF
+  
+~END 
+#-----------------------------------END CONVERSION--------------------------
+
+~START POSTSINGLEIMPORT
+	
+	~IF ~([ROUGH_OSET] =1) = 1
+		~boundsAry("OriginalShapesIdxArray",,, "ARRAYSIZE")
+	    ~IF ~([ARRAYSIZE] > 0) = 1
+	    	~LET [isA] = IS_SHAPE
+	    	
+			~OffsetA("OriginalShapesIdxArray", [ROUGH_OSET_VAL], "R", 2, [isA], "OffsetedShapeIdxArray")
+			
+		   	# GET THESE VALUES FROM A SETUP DIALOG ...   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			~LET [TNVALUE] = [ROUGH_TOOL]
+		   	~LET [TOOLDIA] = ~Atr(T=[TNVALUE], "DIAM")
+		   	~LET [TOOLCOMP] = 1
+		   	~LET [DEPTH] = ~([PANELTHICKNESSVALUE] - 0.5)
+		   	
+			~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+			~SetTool([isA], [copyIdx], [TOOL_STRING])
+			~LET [copyIdx] = ~Ary("OffsetedShapeIdxArray", 0)
+			~DO WHILE(~I([copyIdx] != -1) = 1)
+				~OBJSET([isA], [copyIdx], ".diam", [TOOLDIA], ".tcomp", [TOOLCOMP], ".ps", [DEPTH], ".pe", [DEPTH])
+				~OBJGET([isA], [copyIdx], ".next", "copyIdx")
+			~LOOP
+			
+			# apply lead in / out
+			~IF ~([USELEAD] =1) = 1
+				~LET [copyIdx] = ~Ary("OffsetedShapeIdxArray", 0)
+				~OBJGET([isA], [copyIdx], ".first", "copyIdx")
+				~SetLeadInOut("IS_SHAPE", [copyIdx], 1)
+				~OBJGET([isA], [copyIdx], ".last", "copyIdx")
+				~SetLeadInOut("IS_SHAPE", [copyIdx], 2)
+			~ENDIF
+			
+			~delAry("OffsetedShapeIdxArray")
+		~ENDIF
+	~ENDIF	
+	
+	
+	# DELETE SELECTED ARRAYS
+	~FOR [i] = [QtEntitiesToDelete]-1 TO 0 STEP -1
+		~LET [delidx] = ~Ary("EntitiesToDelete", [i])
+		~ObjDel("IS_SHAPE", [delidx],1)
+	~NEXT
+	~FOR [i] = [QtEntitiesToDelete2]-1 TO 0 STEP -1
+		~LET [delidx] = ~Ary("EntitiesToDelete2", [i])
+		~ObjDel("IS_HOLE", [delidx],1)
+	~NEXT
+	
+	# RESET ENTITY COUNT
+	~LET [QtEntitiesToDelete] = 0
+	~LET [QtEntitiesToDelete2] = 0
+	
+	# SET THE PANEL DIMENSION		     		     			
+	#~IF [CALLER] <> CAD 
+	  ~SETPANEL([DIMX],~([DIMY]),[PANELTHICKNESSVALUE],0,0)
+		#~MSGBOX(,,"X=",[DIMX],"  Y=",[DIMY],"  Z=",[PANELTHICKNESSVALUE])
+	#~ENDIF
+	
+~END
+
+~START POSTTOTALIMPORT
+	~delAry("EntitiesToDelete")
+	~delAry("EntitiesToDelete2")
+	~delAry("OriginalShapesIdxArray")
+	~delAry("DirParameters")
+~END
+
+
+~START HORIZONTAL
+	#~LET [ZVALUE_HORI] = ~([PANELTHICKNESSVALUE]-[ZVALUE_HORI])
+	~IF ~([ys] = [ye] AND [xe] > [xs]) = 1
+		~LET [FACE] = 3
+		~LET [HORI_DEPTH] = ~([ENT_XMAX] - [ENT_XMIN])			
+		~LET [HORI_YPOS] = ~(ABS([ENT_YMIN]+([ENT_YMAX] - [ENT_YMIN])/2)-[DIMY])
+		~LET [HORI_DIAM] = ~([ENT_YMAX] - [ENT_YMIN])
+	~ENDIF
+		
+	~IF ~([ys] = [ye] AND [xe] < [xs]) = 1
+		~LET [FACE] = 2
+		~LET [HORI_DEPTH] = ~([ENT_XMAX] - [ENT_XMIN])			
+		~LET [HORI_YPOS] = ~(ABS([ENT_YMIN]+([ENT_YMAX] - [ENT_YMIN])/2)-[DIMY])
+		~LET [HORI_DIAM] = ~([ENT_YMAX] - [ENT_YMIN])
+	~ENDIF	
+	
+	~IF ~([xs] = [xe] AND [ye] > [ys]) = 1
+		~LET [FACE] = 5
+		~LET [HORI_DEPTH] = ~([ENT_YMAX] - [ENT_YMIN])			
+		~LET [HORI_XPOS] = ~(ABS([ENT_XMIN]+([ENT_XMAX] - [ENT_XMIN])/2))
+		~LET [HORI_DIAM] = ~([ENT_XMAX] - [ENT_XMIN])
+		~LET [ZVALUE_HORI] = ~([ZVALUE_HORI] - [DIMY])
+	~ENDIF	
+	
+	~IF ~([xs] = [xe] AND [ye] < [ys]) = 1
+		~LET [FACE] = 4
+		~LET [HORI_DEPTH] = ~([ENT_YMAX] - [ENT_YMIN])			
+		~LET [HORI_XPOS] = ~(ABS([ENT_XMIN]+([ENT_XMAX] - [ENT_XMIN])/2))
+		~LET [HORI_DIAM] = ~([ENT_XMAX] - [ENT_XMIN])
+		~LET [ZVALUE_HORI] = ~([ZVALUE_HORI] - [DIMY])
+	~ENDIF
+		
+	~IF ~([FACE] = 2 OR [FACE] = 3) = 1
+#~MSGBOX(,,[PANELTHICKNESSVALUE])
+		#~MSGBOX(,,"FACE=",[FACE],"    X=",[ZVALUE_HORI],"  Y=",[HORI_YPOS],"  Z=",[HORI_DEPTH],"  DIA=",[HORI_DIAM])
+		~F([FACE])
+		~B([ZVALUE_HORI],[HORI_YPOS],~([HORI_DEPTH]),[HORI_DIAM])
+	~ENDIF	
+	~IF ~([FACE] = 4 OR [FACE] = 5) = 1
+		#~MSGBOX(,,"FACE=",[FACE],"    X=",[HORI_XPOS],"  Y=",[ZVALUE_HORI],"  Z=",[HORI_DEPTH],"  DIA=",[HORI_DIAM])
+		~F([FACE])
+		~B(~([HORI_XPOS]),~([ZVALUE_HORI]),[HORI_DEPTH],[HORI_DIAM])
+	~ENDIF
+	
+		~F(1)
+	
+~END
+
+~START CPOCKET
+
+		#REQUIRED VARIABLES
+		#TOOL
+		#XPOS = X CENTRE OF HOLE
+		#YPOS = Y CENTRE OF HOLE
+		#SINKDIA = DIAMETER OF HOLE
+
+		~LET [SINKDIA] = ~([radius]*2)
+		
+	~IF ~([TOOLDIA] >= [SINKDIA]) = 1
+		~MSGBOX(,,"Tool diameter too large for circular pocket.",[CHR13],"No pocket created.")
+	~ELSE	
+	
+		~LET [XPOS] = [xc]
+		~LET [YPOS] = [yc]
+						
+    	~LET [TOOL_OVER_LAP] = 0
+    	~LET [TOOLDIA] = ~Atr(T=[TNVALUE], "DIAM")
+		~LET [TOOL_RADIUS] = ~([TOOLDIA]/2)
+		~LET [SINK_RADIUS] = ~([SINKDIA]/2-[TOOL_RADIUS])
+		~LET [NUM] = ~(RD(([SINK_RADIUS])/([TOOLDIA]-[TOOL_OVER_LAP])))
+		~LET [DIFF] = ~([SINK_RADIUS]-(([TOOLDIA]-[TOOL_OVER_LAP])*[NUM]))
+		
+		~IF ~([DIFF] = 0) = 1
+			~LET [DIFF] = [TOOLDIA]
+			~LET [NUM] = ~([NUM]-1)
+		~ENDIF
+		
+		~LET [Y2] = ~([YPOS])
+		~LET [X1] = ~([XPOS] - [DIFF])
+		~LET [X2] = ~([XPOS] + [DIFF])
+		~LET [XSTART] = ~([XPOS])
+		~LET [XX1] = ~([X1])
+		~LET [XX2] = ~([X2])
+		~LET [NUMCOUNT] = ~([NUM])
+    	~LET [PRIORITY] = 1
+	
+		~F(1)
+		~C = (0)
+		~G0(~([XSTART]+1), ~([Y2]), 0, [TOOL_STRING])
+	    ~G1(~([XSTART]), ~([Y2]), [ENT_THICKNESS])
+		~DO
+		    ~G1(~([X1]), ~([Y2]))
+			~G2(~([X2]), ~([Y2]),, ~([XSTART]), ~([Y2]))
+		    ~G2(~([X1]), ~([Y2]),, ~([XSTART]), ~([Y2]))
+		    ~LET [NUM] = ~([NUM]-1)
+		    ~LET [X1] = ~([X1]-[TOOLDIA]-[TOOL_OVER_LAP])
+		    ~LET [X2] = ~([X2]+[TOOLDIA]-[TOOL_OVER_LAP])
+		~LOOP UNTIL (~([NUM] >= 0) = 1)
+	~ENDIF
+
+~END
+
+~START RPOCKET
+
+			~LET [pr] = 0
+			~LET [TOOL_OVER_LAP] = 0
+			~LET [TOOL_USE] = ~Atr(T=[TNVALUE], "DIAM") 
+			~LET [TRAD] = ~([TOOL_USE]/2)
+			~LET [pr2] = ~([pr]+[TRAD])
+			~LET [TOOLDIA] = ~([TRAD]*2) #DIAMETER OF TOOL TO BE USED
+			
+			~LET [LENGTH] = ~(SQR(([x2]-[x1])**2+([y1]-[y2])**2))
+			~LET [WIDTH] = ~(SQR(([x2]-[x3])**2+([y2]-[y3])**2))
+			~LET [LENGTH] = ~([LENGTH]-[pr2]*2)
+			~LET [WIDTH] = ~([WIDTH]-[pr2]*2)
+				
+			~LET [BOX_LENGTH] = ~([LENGTH] + [pr2]*2)		
+			~LET [BOX_WIDTH] = ~([WIDTH] + [pr2]*2)	
+			
+			~IF [DIRECTION] = CCW            
+				~LET [pxx] = [x4]
+				~LET [pyy] = ~([y4])
+			~ELSE
+				~LET [pxx] = [x1]
+				~LET [pyy] = ~([y1])
+			~ENDIF
+							
+			~IF ~(([TOOL_USE] >= [BOX_LENGTH]) || ([TOOL_USE] >= [BOX_WIDTH])) = 1
+				~MSGBOX(,,"Tool diameter too large for rectangular pocket.",[CHR13],"No pocket created.")
+			~ENDIF		
+			
+	    	~LET [PRIORITY] = 1
+			~LET [TOOL_STRING] = ~STRCAT(~CHR(34), "T=", [TNVALUE], ", PRY=", [PRIORITY], ~CHR(34))
+								
+	~IF ~(([TOOL_USE] < [BOX_LENGTH]) AND ([TOOL_USE] < [BOX_WIDTH])) = 1
+			~F(1)
+	~IF ~([LENGTH] > [WIDTH]) = 1
+	        #~MSGBOX("1",,"LENGTH GREATER THAN WIDTH")
+			~LET [XPR] = ~(SIN [ANGLE] * [pr2])			
+			~LET [YPR] = ~(COS [ANGLE] * [pr2])
+			
+			~LET [XDH] = ~(COS [ANGLE] * ([WIDTH]/2+[pr2]))			
+			~LET [YDH] = ~(SIN [ANGLE] * ([WIDTH]/2+[pr2]))			
+			~LET [XS1] = ~([pxx] +[XDH]+[XPR])			
+			~LET [YS1] = ~([pyy] +[YDH]-[YPR])
+									
+			~LET [TOOL_RADIUS] = ~([TOOLDIA]-[TOOL_OVER_LAP])
+			~LET [NUM] = ~(RD(([WIDTH])/[TOOL_RADIUS]))
+			~LET [DIFF] = ~([WIDTH]-([TOOL_RADIUS]*[NUM]))
+			~LET [REV] = 1
+			
+			~C (0) 
+				~G0([XS1], ~([YS1]), 0, [TOOL_STRING])
+				~alG1(~([ANGLE]),~([WIDTH]/2),[ENT_THICKNESS])				
+				~alG1(~([ANGLE]+180),~([WIDTH]))				
+				
+			~IF ~I([DIFF] > 0) = 1
+				~LET [START] = ~([DIFF])
+				~LET [NUM] = ~([NUM]+1)
+			~ELSE
+				~LET [START] = ~([TOOL_RADIUS])
+			~ENDIF
+			
+		  	~DO 
+				~IF ~I([REV] = 1) = 1
+					~alG1(~([ANGLE]-90),~([LENGTH]))				
+					~alG1(~([ANGLE]),~([START]))				
+					~LET [REV] = 0
+				~ELSE
+					~alG1(~([ANGLE]-270),~([LENGTH]))				
+					~alG1(~([ANGLE]),~([START]))				
+					~LET [REV] = 1
+				~ENDIF
+					~LET [START] = ~([TOOL_RADIUS])
+					~LET [NUM] = ~([NUM]-1)
+			~LOOP UNTIL (~([NUM] != 0) = 1)
+		    
+			~IF ~I([REV] = 1) = 1
+				~alG1(~([ANGLE]-90),~([LENGTH]))				
+				~alG1(~([ANGLE]+180),~([WIDTH]))				
+			~ELSE
+				~alG1(~([ANGLE]-270),~([LENGTH]))				
+				~alG1(~([ANGLE]-90),~([LENGTH]))				
+				~alG1(~([ANGLE]+180),~([WIDTH]))				
+			~ENDIF
+			
+	~ELSE
+			~IF [DIRECTION] = CCW            
+				~LET [pxx] = [x3]
+				~LET [pyy] = ~([y4])
+				#~B([pxx],[pyy],1,20)			
+			~ELSE
+				~LET [pxx] = ~([x2])
+				~LET [pyy] = ~([y1])
+				#~B([pxx],[pyy],[DZ],20)			
+			~ENDIF
+			~LET [ANGLE] = ~([ANGLE]+90)			
+			~LET [XPR] = ~(SIN [ANGLE] * [pr2])			
+			~LET [YPR] = ~(COS [ANGLE] * [pr2])
+						
+			~LET [XDH] = ~(COS [ANGLE] * ([LENGTH]/2+[pr2]))			
+			~LET [YDH] = ~(SIN [ANGLE] * ([LENGTH]/2+[pr2]))			
+			~LET [XS1] = ~([pxx]+[XDH]+[XPR])			
+			~LET [YS1] = ~([pyy]-[YDH]-[YPR])
+						
+			~LET [TOOL_RADIUS] = ~([TOOLDIA]-[TOOL_OVER_LAP])
+			~LET [NUM] = ~(RD(([LENGTH])/[TOOL_RADIUS]))
+			~LET [DIFF] = ~([LENGTH]-([TOOL_RADIUS]*[NUM]))
+			~LET [ANGLE] = ~([ANGLE]-90)			
+			#~B([XS1],[YS1],1,10)			
+						 
+			~LET [REV] = 1
+			~C (0) 
+				~G0([XS1], ~([YS1]), 0, [TOOL_STRING])
+				~alG1(~([ANGLE]-90),~([LENGTH]/2),[ENT_THICKNESS])				
+				~alG1(~([ANGLE]+90),~([LENGTH]))				
+				
+			~IF ~I([DIFF] > 0) = 1
+				~LET [START] = ~([DIFF])
+				~LET [NUM] = ~([NUM]+1)
+			~ELSE
+				~LET [START] = ~([TOOL_RADIUS])
+			~ENDIF
+			
+		  	~DO 
+				~IF ~I([REV] = 1) = 1
+					~alG1(~([ANGLE]),~([WIDTH]))				
+					~alG1(~([ANGLE]-90),~([START]))				
+					~LET [REV] = 0
+				~ELSE
+					~alG1(~([ANGLE]-180),~([WIDTH]))				
+					~alG1(~([ANGLE]-90),~([START]))				
+					~LET [REV] = 1
+				~ENDIF
+					~LET [START] = ~([TOOL_RADIUS])
+					~LET [NUM] = ~([NUM]-1)
+			~LOOP UNTIL (~([NUM] != 0) = 1)
+		    
+			~IF ~I([REV] = 1) = 1
+				~alG1(~([ANGLE]),~([WIDTH]))				
+				~alG1(~([ANGLE]+90),~([LENGTH]))				
+			~ELSE
+				~alG1(~([ANGLE]-180),~([WIDTH]))				
+				~alG1(~([ANGLE]),~([WIDTH]))				
+				~alG1(~([ANGLE]+90),~([LENGTH]))				
+			~ENDIF
+	~ENDIF
+	~ENDIF
+
+~END
+~START OFFSET
+
+	~dimAry("OriginalShapesIdxArray", 0)
+	
+	~OBJGET([isA], [idxCOPY], ".first", "idxCOPY")
+	  ~LET [I] = 0
+	~DO WHILE([idxCOPY] != -1)
+		#~MSGBOX(,,[idxCOPY])
+		~LETARY("OriginalShapesIdxArray", [I]) = [idxCOPY]
+		~LET [I] = ~I([I] + 1)
+		~OBJGET([isA], [idxCOPY], ".next", "idxCOPY")
+	~LOOP
+	
+	~OffsetA("OriginalShapesIdxArray", 10.0, "L", 1, "isA", "OffsetedShapeIdxArray")
+	~Offset(10.0, "L", "isA", "idxCOPY")
+	
+	~delAry("OriginalShapesIdxArray")
+	
+~END

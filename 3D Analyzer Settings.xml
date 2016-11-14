@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Specification xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Items>
+    <Item Key="DrillingHead/Tool/No" Value="501" DefaultValue="501" />
+    <Item Key="DXF_Drilling/Diameter/1" Value="3" DefaultValue="3" />
+    <Item Key="DXF_Drilling/Diameter/2" Value="3.2" DefaultValue="5" />
+    <Item Key="DXF_Drilling/Diameter/3" Value="4" DefaultValue="8" />
+    <Item Key="DXF_Drilling/Diameter/4" Value="5" DefaultValue="10" />
+    <Item Key="DXF_Drilling/Diameter/5" Value="8" DefaultValue="12" />
+    <Item Key="DXF_Drilling/Diameter/6" Value="10" DefaultValue="15" />
+    <Item Key="DXF_Drilling/Diameter/7" Value="0" DefaultValue="20" />
+    <Item Key="DXF_Drilling/Diameter/8" Value="0" DefaultValue="35" />
+    <Item Key="DXF_Drilling/Diameter/9" Value="0" DefaultValue="0" />
+    <Item Key="DXF_Drilling/Diameter/10" Value="0" DefaultValue="0" />
+    <Item Key="DXF_Drilling/Type/1" Value="10" DefaultValue="20" />
+    <Item Key="DXF_Drilling/Type/2" Value="10" DefaultValue="20" />
+    <Item Key="DXF_Drilling/Type/3" Value="10" DefaultValue="20" />
+    <Item Key="DXF_Drilling/Type/4" Value="10" DefaultValue="20" />
+    <Item Key="DXF_Drilling/Type/5" Value="10" DefaultValue="20" />
+    <Item Key="DXF_Drilling/Type/6" Value="20" DefaultValue="30" />
+    <Item Key="DXF_Drilling/Type/7" Value="10" DefaultValue="30" />
+    <Item Key="DXF_Drilling/Type/8" Value="10" DefaultValue="30" />
+    <Item Key="DXF_Drilling/Type/9" Value="10" DefaultValue="0" />
+    <Item Key="DXF_Drilling/Type/10" Value="0" DefaultValue="0" />
+    <Item Key="RouterStartFinish/Start/Factor" Value="1.2" DefaultValue="1.2" />
+    <Item Key="RouterStartFinish/Finish/Factor" Value="1.2" DefaultValue="1.2" />
+    <Item Key="GenericDowel/Diameter/VerticalDowel" DefaultValue="8" />
+    <Item Key="GenericDowel/Type/VerticalDowel" DefaultValue="10" />
+    <Item Key="GenericDowel/Type/HorizontalDowel" DefaultValue="0" />
+    <Item Key="GenericDowel/Depth/VerticalDowel" DefaultValue="12" />
+    <Item Key="GenericDowel/Depth/HorizontalDowel" DefaultValue="25" />
+    <Item Key="CabinetVision/CabinetVision/CabinetVision" Value="False" DefaultValue="False" />
+    <Item Key="ShelfDrilling/DefaultSetting/0" Value="12" DefaultValue="12" />
+    <Item Key="ShelfDrilling/DefaultSetting/1" Value="5" DefaultValue="5" />
+    <Item Key="ShelfDrilling/DefaultSetting/2" Value="10" DefaultValue="10" />
+    <Item Key="ShelfDrilling/DefaultSetting/3" Value="132" DefaultValue="150" />
+    <Item Key="ShelfDrilling/DefaultSetting/4" Value="132" DefaultValue="150" />
+    <Item Key="ShelfDrilling/DefaultSetting/5" Value="50" DefaultValue="50" />
+    <Item Key="ShelfDrilling/DefaultSetting/6" Value="50" DefaultValue="50" />
+    <Item Key="ShelfDrilling/DefaultSetting/7" Value="32" DefaultValue="32" />
+    <Item Key="ShelfDrilling/LimitSetting/1" Value="500" DefaultValue="500" />
+    <Item Key="ShelfDrilling/LimitSetting/2" Value="68" DefaultValue="50" />
+    <Item Key="ShelfDrilling/LimitSetting/3" Value="68" DefaultValue="50" />
+    <Item Key="ShelfDrilling/LimitSetting/4" Value="1000" DefaultValue="1000" />
+    <Item Key="ShelfDrilling/LimitSetting/5" Value="100" DefaultValue="100" />
+    <Item Key="ShelfDrilling/LimitSetting/6" Value="100" DefaultValue="100" />
+    <Item Key="ShelfDrilling/BackDrilling/3" Value="True" />
+    <Item Key="ShelfDrilling/BackDrilling/7" Value="750" DefaultValue="750" />
+    <Item Key="HingeDrilling/Plate/0" Value="13" DefaultValue="13" />
+    <Item Key="HingeDrilling/Plate/1" Value="4.75" DefaultValue="5" />
+    <Item Key="HingeDrilling/Plate/2" Value="10" DefaultValue="10" />
+    <Item Key="HingeDrilling/Plate/3" Value="16" DefaultValue="16" />
+    <Item Key="HingeDrilling/Plate/4" Value="37" DefaultValue="37" />
+    <Item Key="HingeDrilling/Plate/5" Value="False" DefaultValue="False" />
+    <Item Key="HingeDrilling/Plate/6" Value="20" DefaultValue="20" />
+    <Item Key="HingeDrilling/Plate/7" Value="32" DefaultValue="32" />
+    <Item Key="HingeDrilling/Hinge1/1" Value="13" DefaultValue="13" />
+    <Item Key="HingeDrilling/Hinge1/2" Value="35" DefaultValue="35" />
+    <Item Key="HingeDrilling/Hinge1/3" Value="30" DefaultValue="30" />
+    <Item Key="HingeDrilling/Hinge1/5" Value="5" DefaultValue="5" />
+    <Item Key="HingeDrilling/Hinge1/6" Value="8" DefaultValue="8" />
+    <Item Key="HingeDrilling/Hinge1/7" Value="10" DefaultValue="10" />
+    <Item Key="HingeDrilling/Hinge2/1" Value="False" DefaultValue="False" />
+    <Item Key="HingeDrilling/Hinge2/3" Value="24" DefaultValue="24" />
+    <Item Key="HingeDrilling/Hinge2/6" Value="22.5" DefaultValue="22.5" />
+    <Item Key="HingeDrilling/Hinge2/7" Value="30" DefaultValue="30" />
+    <Item Key="HingeDrilling/Hinge3/3" Value="12.5" DefaultValue="12.5" />
+    <Item Key="HingeDrilling/Hinge3/6" Value="22" DefaultValue="22" />
+    <Item Key="HingeDrilling/Hinge3/7" Value="20" DefaultValue="20" />
+    <Item Key="HorizontalCam/Diameter/Cam" DefaultValue="15" />
+    <Item Key="HorizontalCam/Diameter/VerticalPin" DefaultValue="5" />
+    <Item Key="HorizontalCam/Diameter/HorizontalPin" DefaultValue="8" />
+    <Item Key="HorizontalCam/Type/Cam" DefaultValue="30" />
+    <Item Key="HorizontalCam/Type/VerticalPin" DefaultValue="10" />
+    <Item Key="HorizontalCam/Type/HorizontalPin" DefaultValue="0" />
+    <Item Key="HorizontalCam/Depth/Cam" DefaultValue="4.5" />
+    <Item Key="HorizontalCam/Depth/VerticalPin" DefaultValue="12" />
+    <Item Key="HorizontalCam/Depth/HorizontalPin" DefaultValue="25" />
+    <Item Key="HorizontalCam/DoDowel/Cam" DefaultValue="True" />
+    <Item Key="HorizontalCam/Limit1/Var1" DefaultValue="45" />
+    <Item Key="HorizontalCam/Limit1/Var2" DefaultValue="128" />
+    <Item Key="HorizontalCam/Limit2/Var1" DefaultValue="178" />
+    <Item Key="HorizontalCam/Limit2/Var2" DefaultValue="32" />
+    <Item Key="HorizontalCam/FixingOffset/Var1" DefaultValue="32" />
+    <Item Key="HorizontalCam/FixingOffset/Var2" DefaultValue="64" />
+    <Item Key="HorizontalCam/Limit3/Var1" DefaultValue="750" />
+    <Item Key="HorizontalCam/Limit3/Var2" DefaultValue="350" />
+    <Item Key="HorizontalCam/Limit4/Var1" DefaultValue="3600" />
+    <Item Key="HorizontalCam/Limit4/Var2" DefaultValue="450" />
+    <Item Key="HorizontalCam/Top/Part1" DefaultValue="Top" />
+    <Item Key="HorizontalCam/Top/Part2" DefaultValue="CR Front" />
+    <Item Key="HorizontalCam/Top/Part3" DefaultValue="CR Back" />
+    <Item Key="HorizontalCam/Top/Part4" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Top/Part5" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Top/Part6" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Top/Part7" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Top/Part8" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Top/Part9" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Top/Part10" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part1" DefaultValue="Fixed Shelf" />
+    <Item Key="HorizontalCam/Bottom/Part2" DefaultValue="Bottom" />
+    <Item Key="HorizontalCam/Bottom/Part3" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part4" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part5" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part6" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part7" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part8" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part9" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Bottom/Part10" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part1" DefaultValue="End LH" />
+    <Item Key="HorizontalCam/Inside/Part2" DefaultValue="End RH" />
+    <Item Key="HorizontalCam/Inside/Part3" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part4" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part5" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part6" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part7" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part8" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part9" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Inside/Part10" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part1" DefaultValue="Back" />
+    <Item Key="HorizontalCam/Outside/Part2" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part3" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part4" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part5" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part6" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part7" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part8" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part9" DefaultValue="NA" />
+    <Item Key="HorizontalCam/Outside/Part10" DefaultValue="NA" />
+    <Item Key="Dowel/Limit1/Var1" DefaultValue="45" />
+    <Item Key="Dowel/Limit1/Var2" DefaultValue="96" />
+    <Item Key="Dowel/Limit2/Var1" DefaultValue="3601" />
+    <Item Key="Dowel/Limit2/Var2" DefaultValue="32" />
+    <Item Key="Dowel/Distribution/Var1" DefaultValue="350" />
+    <Item Key="Screw/Diameter/Drill" Value="3.25" DefaultValue="5" />
+    <Item Key="Screw/Type/Drill" Value="10" DefaultValue="20" />
+    <Item Key="Screw/Depth/Drill" Value="1" DefaultValue="1" />
+    <Item Key="Screw/DoDowel/Drill" Value="False" DefaultValue="True" />
+    <Item Key="Screw/Limit1/Var1" Value="45" DefaultValue="45" />
+    <Item Key="Screw/Limit1/Var2" Value="150" DefaultValue="128" />
+    <Item Key="Screw/Limit2/Var1" Value="192" DefaultValue="192" />
+    <Item Key="Screw/Limit2/Var2" Value="50" DefaultValue="32" />
+    <Item Key="Screw/FixingOffset/Var1" Value="50" DefaultValue="32" />
+    <Item Key="Screw/FixingOffset/Var2" Value="50" DefaultValue="64" />
+    <Item Key="Screw/Limit3/Var1" Value="3601" DefaultValue="3601" />
+    <Item Key="Screw/Limit3/Var2" Value="350" DefaultValue="350" />
+    <Item Key="PilotScrew/Diameter/VerticalDrill" DefaultValue="5" />
+    <Item Key="PilotScrew/Diameter/HorizontalDrill" DefaultValue="3" />
+    <Item Key="PilotScrew/Type/VerticalDrill" DefaultValue="20" />
+    <Item Key="PilotScrew/Type/HorizontalDrill" DefaultValue="0" />
+    <Item Key="PilotScrew/Depth/VerticalDrill" DefaultValue="1" />
+    <Item Key="PilotScrew/Depth/HorizontalDrill" DefaultValue="15" />
+    <Item Key="PilotScrew/Limit1/Var1" DefaultValue="45" />
+    <Item Key="PilotScrew/Limit1/Var2" DefaultValue="96" />
+    <Item Key="PilotScrew/Limit2/Var1" DefaultValue="3601" />
+    <Item Key="PilotScrew/Limit2/Var2" DefaultValue="32" />
+    <Item Key="PilotScrew/Distribution/Var1" DefaultValue="350" />
+    <Item Key="VerticalCam/Diameter/Cam" Value="20" DefaultValue="20" />
+    <Item Key="VerticalCam/Diameter/Pin" Value="5" DefaultValue="5" />
+    <Item Key="VerticalCam/Type/Cam" Value="10" DefaultValue="30" />
+    <Item Key="VerticalCam/Type/Pin" Value="10" DefaultValue="10" />
+    <Item Key="VerticalCam/Depth/Cam" Value="12" DefaultValue="12" />
+    <Item Key="VerticalCam/Depth/Pin" Value="12" DefaultValue="12" />
+    <Item Key="VerticalCam/Distance/Cam" Value="9.5" DefaultValue="9.5" />
+    <Item Key="VerticalCam/Distance/Pin" Value="6" DefaultValue="6" />
+    <Item Key="VerticalCam/Limit1/Var1" Value="45" DefaultValue="45" />
+    <Item Key="VerticalCam/Limit1/Var2" Value="150" DefaultValue="96" />
+    <Item Key="VerticalCam/Limit2/Var1" Value="3601" DefaultValue="3601" />
+    <Item Key="VerticalCam/Limit2/Var2" Value="50" DefaultValue="32" />
+    <Item Key="VerticalCam/Distribution/Var1" Value="350" DefaultValue="550" />
+    <Item Key="VerticalCam/DoRoute/Var2" Value="False" DefaultValue="False" />
+    <Item Key="VerticalCam/ToolInfo1/Var1" Value="131" DefaultValue="131" />
+    <Item Key="VerticalCam/ToolInfo1/Var3" Value="12.5" DefaultValue="8" />
+    <Item Key="VerticalCam/ToolInfo2/Var1" Value="2" DefaultValue="2" />
+    <Item Key="VerticalCam/ToolInfo2/Var3" Value="5" DefaultValue="5" />
+    <Item Key="Component/PartA/Name" DefaultValue="End LH" />
+    <Item Key="Component/PartB/Name" DefaultValue="End RH" />
+    <Item Key="Component/PartC/Name" DefaultValue="Division" />
+    <Item Key="Component/PartD/Name" DefaultValue="DivisionRT" />
+    <Item Key="Component/PartE/Name" DefaultValue="Hinge Post" />
+    <Item Key="Component/PartF/Name" DefaultValue="Door LH" />
+    <Item Key="Component/PartG/Name" DefaultValue="Door RH" />
+    <Item Key="Component/PartH/Name" DefaultValue="DF" />
+    <Item Key="Component/PartI/Name" DefaultValue="DFront" />
+    <Item Key="Component/PartJ/Name" DefaultValue="DBack" />
+    <Item Key="Component/PartK/Name" DefaultValue="DBottom" />
+    <Item Key="Component/PartL/Name" DefaultValue="Adj Shelf" />
+    <Item Key="Component/PartM/Name" DefaultValue="Adj Shelf Dummy" />
+    <Item Key="Component/PartN/Name" DefaultValue="Bench Top" />
+    <Item Key="Component/PartO/Name" DefaultValue="Machine Block" />
+    <Item Key="StandardParts/Var1/PartName" Value="DSide" />
+    <Item Key="StandardParts/Var1/Construction" Value="Screw" />
+    <Item Key="StandardParts/Var1/DoDowels" Value="False" />
+    <Item Key="StandardParts/Var2/PartName" Value="Divider" />
+    <Item Key="StandardParts/Var2/Construction" Value="Screw" />
+    <Item Key="StandardParts/Var2/DoDowels" Value="False" />
+    <Item Key="StandardParts/Var3/PartName" Value="DBack" />
+    <Item Key="StandardParts/Var3/Construction" Value="Screw" />
+    <Item Key="StandardParts/Var3/DoDowels" Value="False" />
+    <Item Key="StandardParts/Var4/PartName" Value="DFront" />
+    <Item Key="StandardParts/Var4/Construction" Value="Screw" />
+    <Item Key="StandardParts/Var4/DoDowels" Value="False" />
+    <Item Key="StandardParts/Var5/PartName" Value="ZZZZ" />
+    <Item Key="StandardParts/Var5/Construction" Value="Screw" />
+    <Item Key="StandardParts/Var5/DoDowels" Value="False" />
+    <Item Key="StandardParts/Var6/PartName" />
+    <Item Key="StandardParts/Var6/Construction" />
+    <Item Key="StandardParts/Var6/DoDowels" />
+    <Item Key="StandardParts/Var7/PartName" />
+    <Item Key="StandardParts/Var7/Construction" />
+    <Item Key="StandardParts/Var7/DoDowels" />
+    <Item Key="StandardParts/Var8/PartName" />
+    <Item Key="StandardParts/Var8/Construction" />
+    <Item Key="StandardParts/Var8/DoDowels" />
+    <Item Key="StandardParts/Var9/PartName" />
+    <Item Key="StandardParts/Var9/Construction" />
+    <Item Key="StandardParts/Var9/DoDowels" />
+    <Item Key="StandardParts/Var10/PartName" />
+    <Item Key="StandardParts/Var10/Construction" />
+    <Item Key="StandardParts/Var10/DoDowels" />
+    <Item Key="StandardParts/Var11/PartName" />
+    <Item Key="StandardParts/Var11/Construction" />
+    <Item Key="StandardParts/Var11/DoDowels" />
+    <Item Key="StandardParts/Var12/PartName" />
+    <Item Key="StandardParts/Var12/Construction" />
+    <Item Key="StandardParts/Var12/DoDowels" />
+    <Item Key="StandardParts/Var13/PartName" />
+    <Item Key="StandardParts/Var13/Construction" />
+    <Item Key="StandardParts/Var13/DoDowels" />
+    <Item Key="StandardParts/Var14/PartName" />
+    <Item Key="StandardParts/Var14/Construction" />
+    <Item Key="StandardParts/Var14/DoDowels" />
+    <Item Key="StandardParts/Var15/PartName" />
+    <Item Key="StandardParts/Var15/Construction" />
+    <Item Key="StandardParts/Var15/DoDowels" />
+    <Item Key="StandardParts/Var16/PartName" />
+    <Item Key="StandardParts/Var16/Construction" />
+    <Item Key="StandardParts/Var16/DoDowels" />
+    <Item Key="StandardParts/Var17/PartName" />
+    <Item Key="StandardParts/Var17/Construction" />
+    <Item Key="StandardParts/Var17/DoDowels" />
+    <Item Key="StandardParts/Var18/PartName" />
+    <Item Key="StandardParts/Var18/Construction" />
+    <Item Key="StandardParts/Var18/DoDowels" />
+    <Item Key="StandardParts/Var19/PartName" />
+    <Item Key="StandardParts/Var19/Construction" />
+    <Item Key="StandardParts/Var19/DoDowels" />
+    <Item Key="StandardParts/Var20/PartName" />
+    <Item Key="StandardParts/Var20/Construction" />
+    <Item Key="StandardParts/Var20/DoDowels" />
+    <Item Key="Nesting/Defaults/5" Value="146" DefaultValue="10" />
+    <Item Key="Nesting/Defaults/7" Value="9.5" DefaultValue="9.5" />
+    <Item Key="Nesting/Defaults/9" Value="0.2" DefaultValue="0.2" />
+    <Item Key="Nesting/Default_Thickness_A/1" Value="13" DefaultValue="13" />
+    <Item Key="Nesting/Default_Thickness_A/3" Value="146" DefaultValue="10" />
+    <Item Key="Nesting/Default_Thickness_A/5" Value="9.5" DefaultValue="9.5" />
+    <Item Key="Nesting/Default_Thickness_A/7" Value="0.2" DefaultValue="0.2" />
+    <Item Key="Nesting/Default_Thickness_A/9" Value="True" DefaultValue="Yes" />
+    <Item Key="Nesting/Default_Thickness_B/1" Value="20" DefaultValue="19" />
+    <Item Key="Nesting/Default_Thickness_B/3" Value="146" DefaultValue="10" />
+    <Item Key="Nesting/Default_Thickness_B/5" Value="9.5" DefaultValue="9.5" />
+    <Item Key="Nesting/Default_Thickness_B/7" Value="0.2" DefaultValue="0.2" />
+    <Item Key="Nesting/Default_Thickness_B/9" Value="True" DefaultValue="Yes" />
+    <Item Key="Nesting/Default_Thickness_C/1" Value="26" DefaultValue="26" />
+    <Item Key="Nesting/Default_Thickness_C/3" Value="128" DefaultValue="20" />
+    <Item Key="Nesting/Default_Thickness_C/5" Value="12.5" DefaultValue="12" />
+    <Item Key="Nesting/Default_Thickness_C/7" Value="0.2" DefaultValue="0.2" />
+    <Item Key="Nesting/Default_Thickness_C/9" Value="False" DefaultValue="Yes" />
+    <Item Key="Nesting/Default_Thickness_D/3" Value="128" DefaultValue="20" />
+    <Item Key="Nesting/Default_Thickness_D/5" Value="12.5" DefaultValue="12" />
+    <Item Key="Nesting/Default_Thickness_D/7" Value="0.2" DefaultValue="0.2" />
+    <Item Key="Nesting/Default_Thickness_D/9" Value="False" DefaultValue="Yes" />
+    <Item Key="Nesting/Material/1" Value="ZZZZ" DefaultValue="NA" />
+    <Item Key="Nesting/Material/2" Value="ZZZZ" DefaultValue="NA" />
+    <Item Key="Nesting/Material/3" Value="ZZZZ" DefaultValue="NA" />
+    <Item Key="Nesting/Material/4" Value="ZZZZ" DefaultValue="NA" />
+    <Item Key="Nesting/Material/5" Value="ZZZZ" DefaultValue="NA" />
+    <Item Key="Nesting/Thickness_A/1" DefaultValue="13" />
+    <Item Key="Nesting/Thickness_A/2" DefaultValue="13" />
+    <Item Key="Nesting/Thickness_A/3" DefaultValue="13" />
+    <Item Key="Nesting/Thickness_A/4" DefaultValue="13" />
+    <Item Key="Nesting/Thickness_A/5" DefaultValue="13" />
+    <Item Key="Nesting/Tool_A/1" DefaultValue="10" />
+    <Item Key="Nesting/Tool_A/2" DefaultValue="10" />
+    <Item Key="Nesting/Tool_A/3" DefaultValue="10" />
+    <Item Key="Nesting/Tool_A/4" DefaultValue="10" />
+    <Item Key="Nesting/Tool_A/5" DefaultValue="10" />
+    <Item Key="Nesting/Diameter_A/1" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_A/2" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_A/3" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_A/4" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_A/5" DefaultValue="9.5" />
+    <Item Key="Nesting/Depth_A/1" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_A/2" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_A/3" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_A/4" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_A/5" DefaultValue="0.2" />
+    <Item Key="Nesting/Thickness_B/1" DefaultValue="19" />
+    <Item Key="Nesting/Thickness_B/2" DefaultValue="19" />
+    <Item Key="Nesting/Thickness_B/3" DefaultValue="19" />
+    <Item Key="Nesting/Thickness_B/4" DefaultValue="19" />
+    <Item Key="Nesting/Thickness_B/5" DefaultValue="19" />
+    <Item Key="Nesting/Tool_B/1" DefaultValue="10" />
+    <Item Key="Nesting/Tool_B/2" DefaultValue="10" />
+    <Item Key="Nesting/Tool_B/3" DefaultValue="10" />
+    <Item Key="Nesting/Tool_B/4" DefaultValue="10" />
+    <Item Key="Nesting/Tool_B/5" DefaultValue="10" />
+    <Item Key="Nesting/Diameter_B/1" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_B/2" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_B/3" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_B/4" DefaultValue="9.5" />
+    <Item Key="Nesting/Diameter_B/5" DefaultValue="9.5" />
+    <Item Key="Nesting/Depth_B/1" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_B/2" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_B/3" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_B/4" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_B/5" DefaultValue="0.2" />
+    <Item Key="Nesting/Thickness_C/1" DefaultValue="26" />
+    <Item Key="Nesting/Thickness_C/2" DefaultValue="26" />
+    <Item Key="Nesting/Thickness_C/3" DefaultValue="26" />
+    <Item Key="Nesting/Thickness_C/4" DefaultValue="26" />
+    <Item Key="Nesting/Thickness_C/5" DefaultValue="26" />
+    <Item Key="Nesting/Tool_C/1" DefaultValue="20" />
+    <Item Key="Nesting/Tool_C/2" DefaultValue="20" />
+    <Item Key="Nesting/Tool_C/3" DefaultValue="20" />
+    <Item Key="Nesting/Tool_C/4" DefaultValue="20" />
+    <Item Key="Nesting/Tool_C/5" DefaultValue="20" />
+    <Item Key="Nesting/Diameter_C/1" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_C/2" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_C/3" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_C/4" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_C/5" DefaultValue="12" />
+    <Item Key="Nesting/Depth_C/1" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_C/2" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_C/3" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_C/4" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_C/5" DefaultValue="0.2" />
+    <Item Key="Nesting/Tool_D/1" DefaultValue="20" />
+    <Item Key="Nesting/Tool_D/2" DefaultValue="20" />
+    <Item Key="Nesting/Tool_D/3" DefaultValue="20" />
+    <Item Key="Nesting/Tool_D/4" DefaultValue="20" />
+    <Item Key="Nesting/Tool_D/5" DefaultValue="20" />
+    <Item Key="Nesting/Diameter_D/1" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_D/2" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_D/3" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_D/4" DefaultValue="12" />
+    <Item Key="Nesting/Diameter_D/5" DefaultValue="12" />
+    <Item Key="Nesting/Depth_D/1" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_D/2" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_D/3" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_D/4" DefaultValue="0.2" />
+    <Item Key="Nesting/Depth_D/5" DefaultValue="0.2" />
+    <Item Key="POD/Defaults/5" Value="16" DefaultValue="20" />
+    <Item Key="POD/Defaults/7" Value="16" DefaultValue="12" />
+    <Item Key="POD/Defaults/9" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Default_Thickness_A/1" Value="13" DefaultValue="13" />
+    <Item Key="POD/Default_Thickness_A/3" Value="16" DefaultValue="20" />
+    <Item Key="POD/Default_Thickness_A/5" Value="16" DefaultValue="12" />
+    <Item Key="POD/Default_Thickness_A/7" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Default_Thickness_A/9" Value="True" DefaultValue="Yes" />
+    <Item Key="POD/Default_Thickness_B/1" Value="19" DefaultValue="19" />
+    <Item Key="POD/Default_Thickness_B/3" Value="16" DefaultValue="20" />
+    <Item Key="POD/Default_Thickness_B/5" Value="16" DefaultValue="12" />
+    <Item Key="POD/Default_Thickness_B/7" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Default_Thickness_B/9" Value="True" DefaultValue="Yes" />
+    <Item Key="POD/Default_Thickness_C/1" Value="26" DefaultValue="26" />
+    <Item Key="POD/Default_Thickness_C/3" Value="16" DefaultValue="30" />
+    <Item Key="POD/Default_Thickness_C/5" Value="16" DefaultValue="16" />
+    <Item Key="POD/Default_Thickness_C/7" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Default_Thickness_C/9" Value="True" DefaultValue="Yes" />
+    <Item Key="POD/Default_Thickness_D/3" Value="16" DefaultValue="30" />
+    <Item Key="POD/Default_Thickness_D/5" Value="16" DefaultValue="16" />
+    <Item Key="POD/Default_Thickness_D/7" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Default_Thickness_D/9" Value="True" DefaultValue="Yes" />
+    <Item Key="POD/Material/1" Value="LCLM" DefaultValue="NA" />
+    <Item Key="POD/Material/2" DefaultValue="NA" />
+    <Item Key="POD/Material/3" DefaultValue="NA" />
+    <Item Key="POD/Material/4" DefaultValue="NA" />
+    <Item Key="POD/Material/5" DefaultValue="NA" />
+    <Item Key="POD/Thickness_A/1" Value="13" DefaultValue="13" />
+    <Item Key="POD/Thickness_A/2" DefaultValue="13" />
+    <Item Key="POD/Thickness_A/3" DefaultValue="13" />
+    <Item Key="POD/Thickness_A/4" DefaultValue="13" />
+    <Item Key="POD/Thickness_A/5" DefaultValue="13" />
+    <Item Key="POD/Tool_A/1" Value="66" DefaultValue="20" />
+    <Item Key="POD/Tool_A/2" DefaultValue="20" />
+    <Item Key="POD/Tool_A/3" DefaultValue="20" />
+    <Item Key="POD/Tool_A/4" DefaultValue="20" />
+    <Item Key="POD/Tool_A/5" DefaultValue="20" />
+    <Item Key="POD/Diameter_A/1" Value="16" DefaultValue="12" />
+    <Item Key="POD/Diameter_A/2" DefaultValue="12" />
+    <Item Key="POD/Diameter_A/3" DefaultValue="12" />
+    <Item Key="POD/Diameter_A/4" DefaultValue="12" />
+    <Item Key="POD/Diameter_A/5" DefaultValue="12" />
+    <Item Key="POD/Depth_A/1" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Depth_A/2" DefaultValue="-2" />
+    <Item Key="POD/Depth_A/3" DefaultValue="-2" />
+    <Item Key="POD/Depth_A/4" DefaultValue="-2" />
+    <Item Key="POD/Depth_A/5" DefaultValue="-2" />
+    <Item Key="POD/Thickness_B/1" Value="19" DefaultValue="19" />
+    <Item Key="POD/Thickness_B/2" DefaultValue="19" />
+    <Item Key="POD/Thickness_B/3" DefaultValue="19" />
+    <Item Key="POD/Thickness_B/4" DefaultValue="19" />
+    <Item Key="POD/Thickness_B/5" DefaultValue="19" />
+    <Item Key="POD/Tool_B/1" Value="16" DefaultValue="20" />
+    <Item Key="POD/Tool_B/2" DefaultValue="20" />
+    <Item Key="POD/Tool_B/3" DefaultValue="20" />
+    <Item Key="POD/Tool_B/4" DefaultValue="20" />
+    <Item Key="POD/Tool_B/5" DefaultValue="20" />
+    <Item Key="POD/Diameter_B/1" Value="16" DefaultValue="12" />
+    <Item Key="POD/Diameter_B/2" DefaultValue="12" />
+    <Item Key="POD/Diameter_B/3" DefaultValue="12" />
+    <Item Key="POD/Diameter_B/4" DefaultValue="12" />
+    <Item Key="POD/Diameter_B/5" DefaultValue="12" />
+    <Item Key="POD/Depth_B/1" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Depth_B/2" DefaultValue="-2" />
+    <Item Key="POD/Depth_B/3" DefaultValue="-2" />
+    <Item Key="POD/Depth_B/4" DefaultValue="-2" />
+    <Item Key="POD/Depth_B/5" DefaultValue="-2" />
+    <Item Key="POD/Thickness_C/1" Value="26" DefaultValue="26" />
+    <Item Key="POD/Thickness_C/2" DefaultValue="26" />
+    <Item Key="POD/Thickness_C/3" DefaultValue="26" />
+    <Item Key="POD/Thickness_C/4" DefaultValue="26" />
+    <Item Key="POD/Thickness_C/5" DefaultValue="26" />
+    <Item Key="POD/Tool_C/1" Value="16" DefaultValue="30" />
+    <Item Key="POD/Tool_C/2" DefaultValue="30" />
+    <Item Key="POD/Tool_C/3" DefaultValue="30" />
+    <Item Key="POD/Tool_C/4" DefaultValue="30" />
+    <Item Key="POD/Tool_C/5" DefaultValue="30" />
+    <Item Key="POD/Diameter_C/1" Value="16" DefaultValue="16" />
+    <Item Key="POD/Diameter_C/2" DefaultValue="16" />
+    <Item Key="POD/Diameter_C/3" DefaultValue="16" />
+    <Item Key="POD/Diameter_C/4" DefaultValue="16" />
+    <Item Key="POD/Diameter_C/5" DefaultValue="16" />
+    <Item Key="POD/Depth_C/1" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Depth_C/2" DefaultValue="-2" />
+    <Item Key="POD/Depth_C/3" DefaultValue="-2" />
+    <Item Key="POD/Depth_C/4" DefaultValue="-2" />
+    <Item Key="POD/Depth_C/5" DefaultValue="-2" />
+    <Item Key="POD/Tool_D/1" Value="16" DefaultValue="30" />
+    <Item Key="POD/Tool_D/2" DefaultValue="30" />
+    <Item Key="POD/Tool_D/3" DefaultValue="30" />
+    <Item Key="POD/Tool_D/4" DefaultValue="30" />
+    <Item Key="POD/Tool_D/5" DefaultValue="30" />
+    <Item Key="POD/Diameter_D/1" Value="16" DefaultValue="16" />
+    <Item Key="POD/Diameter_D/2" DefaultValue="16" />
+    <Item Key="POD/Diameter_D/3" DefaultValue="16" />
+    <Item Key="POD/Diameter_D/4" DefaultValue="16" />
+    <Item Key="POD/Diameter_D/5" DefaultValue="16" />
+    <Item Key="POD/Depth_D/1" Value="2" DefaultValue="-2" />
+    <Item Key="POD/Depth_D/2" DefaultValue="-2" />
+    <Item Key="POD/Depth_D/3" DefaultValue="-2" />
+    <Item Key="POD/Depth_D/4" DefaultValue="-2" />
+    <Item Key="POD/Depth_D/5" DefaultValue="-2" />
+  </Items>
+</Specification>
