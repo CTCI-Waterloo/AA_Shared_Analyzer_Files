@@ -19,3 +19,5 @@ Thumbs.db
 @SynoResource
 .@__thumb
 ._*
+#Access Lockfile
+*.ldb
